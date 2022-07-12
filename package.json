@@ -1,0 +1,11 @@
+{
+  "name": "note-share-express",
+  "version": "1.0.0",
+  "description": "Note Share Backend with Express.js",
+  "main": "src/app/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
