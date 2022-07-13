@@ -4,7 +4,7 @@ export enum NoteType {
 }
 
 export interface Note {
-    id: number,
+    id: string,
     type: NoteType,
     password: string,
     title: string,

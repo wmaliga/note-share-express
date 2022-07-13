@@ -2,7 +2,6 @@ POST http://localhost:8080/notes
 Content-Type: application/json
 
 {
-  "id": "1",
   "type": "PUBLIC",
   "password": "pass",
   "title": "Test note!",

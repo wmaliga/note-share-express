@@ -24,10 +24,4 @@ const notesTable = {
 DynamodbConfig.config();
 const dynamodb = new AWS.DynamoDB({apiVersion: "2012-08-10"});
 
-dynamodb.createTable(notesTable, (err, data) => {
-    if (err) {
-        console.log("[DynamoDB] Error: ", err);
-    } else {
-        console.log("[DynamoDB] Table created: ", data);
-    }
-});
+dynamodb.createTable(notesTable, DynamodbConfig.errorHandler);
