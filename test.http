@@ -1,0 +1,11 @@
+POST http://localhost:8080/notes
+Content-Type: application/json
+
+{
+  "id": "1",
+  "type": "PUBLIC",
+  "password": "pass",
+  "title": "Test note!",
+  "expirationDate": "2030-01-01",
+  "data": "This is the public note!"
+}
