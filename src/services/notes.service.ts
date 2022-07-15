@@ -7,6 +7,11 @@ export default class NotesService {
         return await NotesRepository.findPublicNotes();
     }
 
+    static async getNoteType(id: string): Promise<string> {
+        console.log('[NotesService] Get note type id =', id);
+        return await NotesRepository.getNoteType(id);
+    }
+
     static async saveNote(note: Note): Promise<string> {
         console.log('[NotesService] Save note:', note);
         return await NotesRepository.saveNote(note);

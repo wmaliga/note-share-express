@@ -28,6 +28,17 @@ export default class NotesRepository {
         } as Note
     }
 
+    static async getNoteType(id: string): Promise<string> {
+        const params = {
+            TableName: tableName,
+            AttributesToGet: ['type'],
+            Key: {id: id}
+        };
+
+        let results = await client.get(params).promise();
+        return results.Item ? results.Item.type : null;
+    }
+
     static async saveNote(note: Note): Promise<string> {
         const id = randomUUID();
         const params = {
