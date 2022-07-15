@@ -12,6 +12,11 @@ export default class NotesService {
         return await NotesRepository.getNoteType(id);
     }
 
+    static async getNote(id: string): Promise<Note> {
+        console.log('[NotesService] Get note id =', id);
+        return await NotesRepository.getNote(id);
+    }
+
     static async saveNote(note: Note): Promise<string> {
         console.log('[NotesService] Save note:', note);
         return await NotesRepository.saveNote(note);

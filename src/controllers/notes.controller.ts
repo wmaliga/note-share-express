@@ -22,6 +22,15 @@ export default class NotesController {
         });
     }
 
+    static async getNote(req: Request, res: Response) {
+        console.log('[NotesController] GET call getNote');
+        NotesService.getNote(req.params.id).then(note => {
+            res.status(200).json(note);
+        }).catch(error => {
+            res.status(500).json(error);
+        });
+    }
+
     static async saveNote(req: Request, res: Response) {
         console.log('[NotesController] POST call saveNote');
         const note = NotesController.parseNote(req.body);

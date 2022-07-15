@@ -39,6 +39,16 @@ export default class NotesRepository {
         return results.Item ? results.Item.type : null;
     }
 
+    static async getNote(id: string): Promise<Note> {
+        const params = {
+            TableName: tableName,
+            Key: {id: id}
+        };
+
+        let results = await client.get(params).promise();
+        return NotesRepository.parseNote(results.Item);
+    }
+
     static async saveNote(note: Note): Promise<string> {
         const id = randomUUID();
         const params = {
