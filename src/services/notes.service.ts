@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 
 import {Note, NoteType} from "../models/notes.model";
 import NotesRepository from "../repositories/notes.repository";
+import PasswordUtil from "../utils/password.util";
 
 export default class NotesService {
     static async findPublicNotes(): Promise<Note[]> {
@@ -22,7 +23,7 @@ export default class NotesService {
             throw createHttpError(410, "Note expired");
         }
 
-        if (note.type === NoteType.PRIVATE && note.password != password) {
+        if (note.type === NoteType.PRIVATE && note.password != PasswordUtil.encrypt(password)) {
             throw createHttpError(401, "Unauthorized");
         }
 
@@ -40,6 +41,8 @@ export default class NotesService {
             if (!note.password) {
                 throw createHttpError(422, "Missing password for private note");
             }
+
+            note.password = PasswordUtil.encrypt(note.password);
         } else {
             note.password = undefined;
         }
