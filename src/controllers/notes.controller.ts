@@ -20,7 +20,9 @@ export default class NotesController {
 
     static async getNote(req: Request, res: Response, next: NextFunction) {
         console.log('[NotesController] GET call getNote');
-        NotesService.getNote(req.params.id).then(note => {
+        const password = req.get('Authorization') || '';
+
+        NotesService.getNote(req.params.id, password).then(note => {
             res.status(200).json(note);
         }).catch(next);
     }

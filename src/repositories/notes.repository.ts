@@ -1,6 +1,7 @@
 import {randomUUID} from "crypto";
 
 import AWS from "aws-sdk";
+import createHttpError from "http-errors";
 
 import DynamodbConfig from "../config/dynamodb.config";
 import {Note} from "../models/notes.model";
@@ -36,7 +37,12 @@ export default class NotesRepository {
         };
 
         let results = await client.get(params).promise();
-        return results.Item ? results.Item.type : null;
+
+        if (!results.Item) {
+            throw createHttpError(404, "Note not found");
+        }
+
+        return results.Item.type;
     }
 
     static async getNote(id: string): Promise<Note> {
@@ -46,6 +52,11 @@ export default class NotesRepository {
         };
 
         let results = await client.get(params).promise();
+
+        if (!results.Item) {
+            throw createHttpError(404, "Note not found");
+        }
+
         return NotesRepository.parseNote(results.Item);
     }
 
