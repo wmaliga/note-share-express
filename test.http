@@ -1,8 +1,8 @@
 ### GET Public Notes
-GET http://localhost:8080/notes
+GET http://localhost:8080/api/v1/notes
 
 ### POST Save Note
-POST http://localhost:8080/notes
+POST http://localhost:8080/api/v1/notes
 Content-Type: application/json
 
 {
