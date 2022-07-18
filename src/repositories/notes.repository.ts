@@ -2,6 +2,7 @@ import {randomUUID} from "crypto";
 
 import AWS from "aws-sdk";
 import createHttpError from "http-errors";
+import {Service} from "typedi";
 
 import DynamodbConfig from "../config/dynamodb.config";
 import {Note} from "../models/notes.model";
@@ -11,9 +12,10 @@ const tableName = 'NotesTable';
 DynamodbConfig.config();
 const client = new AWS.DynamoDB.DocumentClient();
 
+@Service()
 export default class NotesRepository {
 
-    static async findPublicNotes(): Promise<Note[]> {
+    async findPublicNotes(): Promise<Note[]> {
         const params = {
             TableName: tableName
         };
@@ -29,7 +31,7 @@ export default class NotesRepository {
         } as Note
     }
 
-    static async getNoteType(id: string): Promise<string> {
+    async getNoteType(id: string): Promise<string> {
         const params = {
             TableName: tableName,
             AttributesToGet: ['type'],
@@ -45,7 +47,7 @@ export default class NotesRepository {
         return results.Item.type;
     }
 
-    static async getNote(id: string): Promise<Note> {
+    async getNote(id: string): Promise<Note> {
         const params = {
             TableName: tableName,
             Key: {id: id}
@@ -60,7 +62,7 @@ export default class NotesRepository {
         return NotesRepository.parseNote(results.Item);
     }
 
-    static async saveNote(note: Note): Promise<string> {
+    async saveNote(note: Note): Promise<string> {
         const id = randomUUID();
         const params = {
             TableName: tableName,

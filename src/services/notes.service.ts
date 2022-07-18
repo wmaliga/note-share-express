@@ -1,36 +1,44 @@
 import createHttpError from 'http-errors';
+import {Service} from "typedi";
 
 import {Note, NoteType} from "../models/notes.model";
 import NotesRepository from "../repositories/notes.repository";
 import PasswordUtil from "../utils/password.util";
 
+@Service()
 export default class NotesService {
-    static async findPublicNotes(): Promise<Note[]> {
+    constructor(
+        private notesRepository: NotesRepository,
+        private passwordUtil: PasswordUtil
+    ) {
+    }
+
+    async findPublicNotes(): Promise<Note[]> {
         console.log('[NotesService] Find public notes');
-        return await NotesRepository.findPublicNotes();
+        return await this.notesRepository.findPublicNotes();
     }
 
-    static async getNoteType(id: string): Promise<string> {
+    async getNoteType(id: string): Promise<string> {
         console.log('[NotesService] Get note type id =', id);
-        return await NotesRepository.getNoteType(id);
+        return await this.notesRepository.getNoteType(id);
     }
 
-    static async getNote(id: string, password: string): Promise<Note> {
+    async getNote(id: string, password: string): Promise<Note> {
         console.log('[NotesService] Get note id =', id);
-        const note = await NotesRepository.getNote(id);
+        const note = await this.notesRepository.getNote(id);
 
         if (note.expirationDate && note.expirationDate < new Date()) {
             throw createHttpError(410, "Note expired");
         }
 
-        if (note.type === NoteType.PRIVATE && note.password != PasswordUtil.encrypt(password)) {
+        if (note.type === NoteType.PRIVATE && note.password != this.passwordUtil.encrypt(password)) {
             throw createHttpError(401, "Unauthorized");
         }
 
         return note;
     }
 
-    static async saveNote(note: Note): Promise<string> {
+    async saveNote(note: Note): Promise<string> {
         console.log('[NotesService] Save note:', note);
 
         if (note.expirationDate && note.expirationDate <= new Date()) {
@@ -42,11 +50,11 @@ export default class NotesService {
                 throw createHttpError(422, "Missing password for private note");
             }
 
-            note.password = PasswordUtil.encrypt(note.password);
+            note.password = this.passwordUtil.encrypt(note.password);
         } else {
             note.password = undefined;
         }
 
-        return await NotesRepository.saveNote(note);
+        return await this.notesRepository.saveNote(note);
     }
 }
