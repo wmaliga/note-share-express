@@ -23,8 +23,7 @@ const errorHandler = (error: Error, req: Request, res: Response, next: NextFunct
 };
 
 app.get('/', (req: Request, res: Response) => {
-    res.send('Hello Word!');
-    res.sendStatus(200);
+    res.status(200).send('Note Share App is running!');
 });
 
 app.use('/api/v1/notes', notesRouter);
