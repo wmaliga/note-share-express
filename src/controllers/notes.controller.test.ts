@@ -9,9 +9,11 @@ jest.mock('../services/notes.service');
 const notesServiceMock = Object.create(NotesService.prototype);
 const notesController = new NotesController(notesServiceMock);
 
-const testNote1 = {id: 'id1'} as Note;
-const testNote2 = {id: 'id2'} as Note;
-const testNotes = [testNote1, testNote2];
+const testNote = {
+    id: 'id1',
+    password: 'pass'
+} as Note;
+const testNotes = [testNote];
 
 function mockReq(): Request {
     const req = {
@@ -47,7 +49,7 @@ describe('Notes controller', () => {
 
         expect(notesServiceMock.findPublicNotes).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(testNotes);
+        expect(res.json).toHaveBeenCalledWith(expect.arrayContaining([{id: 'id1'}]));
     });
 
     test('findPublicNotes error', async () => {
@@ -71,11 +73,11 @@ describe('Notes controller', () => {
         const res = mockRes();
         const next = jest.fn() as NextFunction;
 
-        req.params = {id: testNote1.id};
+        req.params = {id: testNote.id};
 
         await notesController.getNoteType(req, res, next);
 
-        expect(notesServiceMock.getNoteType).toHaveBeenCalledWith(testNote1.id);
+        expect(notesServiceMock.getNoteType).toHaveBeenCalledWith(testNote.id);
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith(NoteType.PRIVATE);
     });
@@ -87,29 +89,29 @@ describe('Notes controller', () => {
         const res = mockRes();
         const next = jest.fn() as NextFunction;
 
-        req.params = {id: testNote1.id};
+        req.params = {id: testNote.id};
 
         await notesController.getNoteType(req, res, next);
 
-        expect(notesServiceMock.getNoteType).toHaveBeenCalledWith(testNote1.id);
+        expect(notesServiceMock.getNoteType).toHaveBeenCalledWith(testNote.id);
         expect(res.status).not.toHaveBeenCalled();
         expect(res.json).not.toHaveBeenCalled();
     });
 
     test('getNote success', async () => {
-        notesServiceMock.getNote.mockReturnValue(Promise.resolve(testNote1));
+        notesServiceMock.getNote.mockReturnValue(Promise.resolve(testNote));
 
         const req = mockReq();
         const res = mockRes();
         const next = jest.fn() as NextFunction;
 
-        req.params = {id: testNote1.id};
+        req.params = {id: testNote.id};
 
         await notesController.getNote(req, res, next);
 
-        expect(notesServiceMock.getNote).toHaveBeenCalledWith(testNote1.id, 'header');
+        expect(notesServiceMock.getNote).toHaveBeenCalledWith(testNote.id, 'header');
         expect(res.status).toHaveBeenCalledWith(200);
-        expect(res.json).toHaveBeenCalledWith(testNote1);
+        expect(res.json).toHaveBeenCalledWith({id: 'id1'});
     });
 
     test('getNote error', async () => {
@@ -119,29 +121,29 @@ describe('Notes controller', () => {
         const res = mockRes();
         const next = jest.fn() as NextFunction;
 
-        req.params = {id: testNote1.id};
+        req.params = {id: testNote.id};
 
         await notesController.getNote(req, res, next);
 
-        expect(notesServiceMock.getNote).toHaveBeenCalledWith(testNote1.id, 'header');
+        expect(notesServiceMock.getNote).toHaveBeenCalledWith(testNote.id, 'header');
         expect(res.status).not.toHaveBeenCalled();
         expect(res.json).not.toHaveBeenCalled();
     });
 
     test('saveNote success', async () => {
-        notesServiceMock.saveNote.mockReturnValue(Promise.resolve(testNote1.id));
+        notesServiceMock.saveNote.mockReturnValue(Promise.resolve(testNote.id));
 
         const req = mockReq();
         const res = mockRes();
         const next = jest.fn() as NextFunction;
 
-        req.body = testNote1;
+        req.body = testNote;
 
         await notesController.saveNote(req, res, next);
 
         expect(notesServiceMock.saveNote).toHaveBeenCalled();
         expect(res.status).toHaveBeenCalledWith(201);
-        expect(res.set).toHaveBeenCalledWith('Location', testNote1.id);
+        expect(res.set).toHaveBeenCalledWith('Location', testNote.id);
     });
 
     test('saveNote error', async () => {
@@ -151,7 +153,7 @@ describe('Notes controller', () => {
         const res = mockRes();
         const next = jest.fn() as NextFunction;
 
-        req.body = testNote1;
+        req.body = testNote;
 
         await notesController.saveNote(req, res, next);
 

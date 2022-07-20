@@ -14,7 +14,8 @@ export default class NotesController {
     async findPublicNotes(req: Request, res: Response, next: NextFunction) {
         console.log('[NotesController] GET call findPublicNotes');
         this.notesService.findPublicNotes().then(notes => {
-            res.status(200).json(notes);
+            const notesData = notes.map(note => NotesController.deleteSensitiveData(note));
+            res.status(200).json(notesData);
         }).catch(next);
     }
 
@@ -30,7 +31,8 @@ export default class NotesController {
         const password = req.get('Authorization') || '';
 
         this.notesService.getNote(req.params.id, password).then(note => {
-            res.status(200).json(note);
+            const noteData = NotesController.deleteSensitiveData(note);
+            res.status(200).json(noteData);
         }).catch(next);
     }
 
@@ -47,5 +49,11 @@ export default class NotesController {
             ...json,
             expirationDate: new Date(json.expirationDate)
         } as Note;
+    }
+
+    static deleteSensitiveData(note: Note) {
+        const noteData = {...note};
+        delete noteData.password;
+        return noteData;
     }
 }
