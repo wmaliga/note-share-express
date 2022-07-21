@@ -7,9 +7,9 @@ export default class DynamodbConfig {
 
     static errorHandler(err: any, data: any) {
         if (err) {
-            console.log("[DynamoDB] Error:", err);
+            console.log('[DynamoDB] Error:', err);
         } else {
-            console.log("[DynamoDB] Success:", data);
+            console.log('[DynamoDB] Success:', data);
         }
     }
 }
