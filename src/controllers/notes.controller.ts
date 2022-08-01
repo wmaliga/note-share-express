@@ -1,8 +1,16 @@
 import {NextFunction, Request, Response} from "express";
 import {Service} from "typedi";
+import {body, validationResult} from "express-validator";
 
-import {Note} from "../models/notes.model";
+import {Note, NoteType} from "../models/notes.model";
 import NotesService from "../services/notes.service";
+
+export const noteValidator = [
+    body('type').not().isEmpty().isIn(Object.values(NoteType)),
+    body('title').not().isEmpty(),
+    body('expirationDate').not().isEmpty().isISO8601().toDate(),
+    body('data').not().isEmpty()
+];
 
 @Service()
 export default class NotesController {
@@ -38,6 +46,12 @@ export default class NotesController {
 
     async saveNote(req: Request, res: Response, next: NextFunction) {
         console.log('[NotesController] POST call saveNote');
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({errors: errors.array()});
+        }
+
         const note = NotesController.parseNote(req.body);
         this.notesService.saveNote(note).then(id => {
             res.status(201).set('Location', id).send();
