@@ -13,7 +13,7 @@ const app = express();
 const port = process.env.PORT;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({exposedHeaders: 'Location'}));
 
 const errorHandler = (error: Error, req: Request, res: Response, next: NextFunction) => {
     console.log('[ErrorHandler] error message:', error.message);
